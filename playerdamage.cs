@@ -1,0 +1,63 @@
+using UnityEngine;
+    
+    public class playerdamage : MonoBehaviour
+    {
+        public bool hitdespawn;
+public int damagevalue;
+public bool sequencehit;
+        public bool trip;
+public bool addforce;
+        
+public float forcepower=10;
+public UnityEngine.Events.UnityEvent events;
+
+
+
+   void OnParticleCollision(GameObject other)
+    {
+ ondamage(other);
+
+    }
+
+
+        void OnCollisionEnter(Collision other)
+    {
+            ondamage(other.gameObject);
+if (trip)
+{
+    other.gameObject.root().GetComponent<Animator>().SetTrigger("trip");
+}
+
+    
+
+}
+
+    
+public void ondamage(GameObject obj){
+
+    
+obj.PlayerDamage(damagevalue);
+      if (hitdespawn)
+      {
+          Destroy(gameObject);
+      }
+        if (addforce)
+{
+ obj.root().GetComponent<UnityChanControlScriptWithRgidBody>().AddForce(transform.forward*forcepower);
+   
+}
+events.Invoke();
+}
+
+
+
+
+    void OnCollisionStay(Collision other)
+    {
+        if (!sequencehit)
+            return;
+            ondamage(other.gameObject);
+}
+
+    
+    }
