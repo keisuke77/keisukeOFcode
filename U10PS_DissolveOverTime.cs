@@ -12,7 +12,7 @@ public class U10PS_DissolveOverTime : MonoBehaviour
    Shader fixshader;
   public Color emissioncolor;
   public Color defaultemissioncolor;
-   public Material blood;
+public Material blood;
     [Range(0,1)]
     bool once;
 public bool death;
