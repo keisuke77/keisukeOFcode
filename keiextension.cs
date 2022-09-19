@@ -809,4 +809,25 @@ return null;
         //return GameObject.Find(nearObjName);
         return targetObj;
     }
+    
+    
+    
+    public static GameObject[] RadiusSearchTag(this GameObject nowObj,string tagName,float radius){
+        float tmpDis = 0;           //距離用一時変数
+          //string nearObjName = "";    //オブジェクト名称
+        GameObject[] targetObj = null; //オブジェクト
+
+        //タグ指定されたオブジェクトを配列で取得する
+        foreach (GameObject obs in  GameObject.FindGameObjectsWithTag(tagName)){
+            //自身と取得したオブジェクトの距離を取得
+            tmpDis =(obs.transform.position- nowObj.transform.position).sqrMagnitude;
+if (tmpDis<radius)
+{
+  targetObj.Add(obs);
+}
+        
+        }
+        
+        return targetObj;
+    }
 }

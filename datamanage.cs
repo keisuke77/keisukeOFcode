@@ -18,6 +18,8 @@ public class datamanage : MonoBehaviour
     public bool firstdataload;
     public itemcurrent itemcurrent;
     UnityChanControlScriptWithRgidBody UnityChanControlScriptWithRgidBody;
+    
+    
     public void addmoney(int amount){
 
     data.addmoney(amount);

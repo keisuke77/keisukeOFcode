@@ -11,6 +11,7 @@ public class motions : ScriptableObject
     public float timing;
     GameObject objs;
 public int damagevalue;
+public float radiusDamage;
 public bodypart bodypart;
 public int[] triggernumber;
  [Range(0,1)]
@@ -47,14 +48,31 @@ if (obj.GetComponentIfNotNull<triggeronoff>()!=null)
  triggeronoff trigeronoff=obj.GetComponentIfNotNull<triggeronoff>();   
 if (damagevalue!=0&&trigeronoff!=null)
 {
-trigeronoff.obj=bodypart.Getbodypart(obj).GetComponentIfNotNull<Collider>();
-
 trigeronoff.obj.gameObject.collset(damagevalue);
 
- keikei.delaycall(()=>trigeronoff.ontriger(),starttime);
- keikei.delaycall(()=>trigeronoff.offtriger(),endtime);
+TriggerCall(()=>trigeronoff.ontriger(),()=>trigeronoff.offtriger());
+
 }
 
+}
+
+
+if (bodypart!=bodypart.no)
+{
+   
+Collider c=bodypart.Getbodypart(obj).GetComponentIfNotNull<Collider>();
+c.gameObject.collset(damagevalue);
+
+TriggerCall(()=>c.enabled=true,starttime,()=>c.enabled=false,endtime);
+
+}
+
+if (radiusDamage!=0)
+{foreach (var item in obj.RadiusSearchTag("E"))
+{
+   
+}
+   
 }
 
 if (obj.GetComponentIfNotNull<trrigeronofflist>()!=null)
@@ -69,12 +87,18 @@ foreach (var item in trrigeronofflist.GetTriger())
 item.gameObject.collset(damagevalue);
 
 }
-
- keikei.delaycall(()=>trrigeronofflist.ontriger(),starttime);
- keikei.delaycall(()=>trrigeronofflist.offtriger(),endtime);
+TriggerCall(()=>trrigeronofflist.ontriger(),()=>trrigeronofflist.offtriger());
 
 }
 }
+
+}
+
+
+void TriggerCall(System.Action ac,System.Action acs){
+
+ keikei.delaycall(ac,starttime);
+ keikei.delaycall(acs,endtime);
 
 }
 
