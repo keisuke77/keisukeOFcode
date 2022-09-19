@@ -6,7 +6,7 @@ using Coffee.UIExtensions;
 
  
 public class hp : hpcore{ 
-    
+    h
     public flashscrean flashscrean;
     ShinyEffectForUGUI m_shiny;
     bool once;
