@@ -347,7 +347,7 @@ foreach (Transform child in allChildren)
         }
         self.BroadcastMessage( methodName, options );   
     }
-    
+  
     public static UnityEngine.Component AddComponentIfNotNull( this UnityEngine.GameObject self, System.Type componentType )    
     {
         if ( self == null )

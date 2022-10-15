@@ -7,7 +7,6 @@ public class attackunitychan : MonoBehaviour
     
     public collcheck collcheck; 
 Rigidbody rb ;
-public bool addforce;
 [SerializeField, Range(0, 1)] private float CritRate = 0.1f;
 		[SerializeField] private float CritMultiplier = 3f;
 public int forcepower;
@@ -71,22 +70,27 @@ var crit = Random.value <= CritRate;
 if (obj.CompareTag("Enemy")){
 
 
-if (other.GetComponent<enemyhp>()!=null)
-{
-   other.GetComponent<enemyhp>().damage(critdamagevalue,crit,other,gameObject.root());
-}else
-{
-   obj.GetComponent<enemyhp>().damage(critdamagevalue,crit,other,gameObject.root());
-}
-   
-   
-     
-
-if (addforce)
-{other.gameObject.addforce(forcepower,transform);
+if (forcepower!=0)
+{this.addforce(other.gameObject,forcepower,transform);
     }
 
+if (other.GetComponent<enemyhp>()!=null)
+{ 
+   other.GetComponent<enemyhp>().damage(critdamagevalue,crit,gameObject.Collider());
+}else
+{
+   obj.GetComponent<enemyhp>().damage(critdamagevalue,crit,gameObject.Collider());
+}
 
+}else if(obj.ptag())
+{
+  
+}else
+{
+  if (obj.GetComponent<Rigidbody>()!=null)
+  {obj.GetComponent<Rigidbody>().AddForce(transform.forward*forcepower,ForceMode.Impulse);
+    
+  }
 }
 
 }

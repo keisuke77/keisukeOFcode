@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
   public enum DataType
     {
-        money,exp,power,hp,name
+        money,exp,power,hp,name,questinfo
     }
 
     
@@ -26,7 +26,8 @@ switch (datatype)
         case DataType.money: return "所持金:"+data.money.ToString();
             break; case DataType.name: return "名前:"+data.name;
             break; case DataType.exp: return "経験値:"+data.exp.ToString();
-            break;
+            break; case DataType.questinfo: return "クエスト情報:"+  data.nowquest.textinpress();
+            break;      
         default:
         return null;
             break;

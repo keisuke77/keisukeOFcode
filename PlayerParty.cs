@@ -1,7 +1,9 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "PlayerParty", menuName = "RPG")]
-public class PlayerParty : RPGparty
+[CreateAssetMenu(menuName = "RPG/PlayerParty", fileName = "PlayerParty")]
+public class PlayerParty : ScriptableObject
 {
+    public RPGCharactor[] members;
+    public string name;
     
 }

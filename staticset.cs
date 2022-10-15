@@ -20,7 +20,6 @@ public class staticset : MonoBehaviour
    public GameObject[] particles;
   public data playerdata;
     public Collider spherecheck;
-    public interactionlist interactionlist;
     public Itemkind noitem;
     public itemuse[] inventorymember;
     public GameObject treasure;
@@ -33,7 +32,8 @@ public class staticset : MonoBehaviour
 public Effekseer.EffekseerEffectAsset chargeeffect;
     // Start is called before the first frame update
     void Awake()
-    {keikei.SimpleMeshExploder=SimpleMeshExploder;
+    {  keikei.communicationbutton=communicationbutton;
+    keikei.SimpleMeshExploder=SimpleMeshExploder;
       message.nextmessagekey=nextmessagekey;
       keikei.chargeeffect=chargeeffect;
       keikei.playerdissolve=playerdissolve;
@@ -51,9 +51,8 @@ public Effekseer.EffekseerEffectAsset chargeeffect;
       keikei.myitemLists=playeriteminventory.myitemLists;
       keikei.explosion=explosion;
         keikei.camera=camera;
-        keikei.interactionlist=interactionlist;
-        keikei.itempickupbutton=itempickupbutton;
-      keikei.communicationbutton=communicationbutton;
+      
+         keikei.itempickupbutton=itempickupbutton;
         keikei.starparticle=starparticle;
         keikei.effects=effects;
         keikei.playerdata=playerdata;

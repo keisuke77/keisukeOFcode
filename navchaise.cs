@@ -12,7 +12,7 @@ using UnityEngine;
 
 
 
-public class navchaise : MonoBehaviour
+public class navchaise : MonoBehaviour,IForceIdle
 {
  public waza waza;
     // エフェクトを取得する。
@@ -52,7 +52,14 @@ public void Setwaza(waza wazas){
     waza=wazas;
 }
 
-
+public void AddForce(Vector3 direction){
+agent.enabled=false;
+if (GetComponent<Rigidbody>()!=null)
+{
+    GetComponent<Rigidbody>().AddForce(direction);
+}  
+agent.enabled=true;
+}
 
 public void pointupdate(){
 if (player)
@@ -114,9 +121,9 @@ pointupdate();
              
 }
 
-
+public float closedistancerate;
 public void SetDestination(){
- agent.destination=point.position;
+ agent.destination=(closedistancerate*point.position+transform.position)/(closedistancerate+1);
 }
 
 public void stop(){
@@ -159,12 +166,16 @@ foreach (var item in waza.wazalist)
 }
 
 public void meleemode(){
- Vector3 Apos = trans.position;
-          meleedistance = (Apos- agent.destination).sqrMagnitude;
+ 
+          meleedistance = (trans.position- agent.destination).sqrMagnitude;
        
-if (meleedistance<0.01f||agentdestinationdis>waza.minwalk)
+if (meleedistance<0.01f)
     {
-        newposition();
+        if (agentdestinationdis>waza.minwalk)
+    {
+         newposition();
+    }
+       
 
     }
    
@@ -177,8 +188,8 @@ if (meleedistance<0.01f||agentdestinationdis>waza.minwalk)
 meleeonce=true;
        }
 
-if(!onces){ 
-firstdiscover();
+if(!onces){ keikei.delaycall(firstdiscover,1f);
+
   onces=true;
     }
 
@@ -206,10 +217,8 @@ public void firstdiscover(){
                          if (firstatractcamera)
                     {
                          m.cameradistance=cameradistance;
-                        m.tr1=transform;
-                        message="tr1"+message;
-                        m.SetMessagePanel(message,false,icon);
-               
+                       
+                    m.gameObject.pclass().AutoRotateCamera.SetMessageAtractCamera(transform,message,null,false);
                     }else
                     {
                         m.SetMessagePanel(message,true,icon);

@@ -43,27 +43,28 @@ public Transform Player;
 public float runclose=2;
  float _rotatesensvilty;
 public xyz nowxyz;
-
-Transform hantei;
+Vector3 rotation;
  void Awake()
- {hantei=(new GameObject("hantei")).Instantiate(transform).transform;
- hantei.parent=transform;
-
+ {
 
 camera=gameObject.transform;
 if (gameObject.proottag())
 {
-  gameObject.root().GetComponent<playerclass>().AutoRotateCamera=this;
+  gameObject.pclass().AutoRotateCamera=this;
 } 
  Player=gameObject.root().transform;   
 
 
 keikei.AutoRotateCameraAll=UnityEngine.Object.FindObjectsOfType(typeof(AutoRotateCamera))as AutoRotateCamera[];
-       
+       keiinput=gameObject.pclass().keiinput;
+  
  }
+
+
 public void CameraSettingSet(CameraSetting c){
 
 nowCameraSetting=c;
+rotaterate=c.rotaterate;
 distance=c.distance;
 rotateY=c.rotateY;
 ControllPos=c.ControllPos;
@@ -76,32 +77,26 @@ ControllPos=c.ControllPos;
 void Start() {
 
   atractend();
-  keiinput=gameObject.pclass().keiinput;
+  angleReset();
 			 
 }
 
-  public void SetMessage(string mes){
 
-message.SetMessagePanel(mes);
-  }
-  public void SetMessage(string mes,bool auto){
-
-message.SetMessagePanel(mes,auto);
-  }  
-  public void SetMessage(string mes,bool auto,Sprite icon){
+  public void SetMessage(string mes,bool auto=false,Sprite icon=null){
 
 message.SetMessagePanel(mes,auto,icon);
   }
 
+  public void SetMessage(string mes,System.Action action){
+
+message.action=delegate(){
+  action();
+};
+SetMessage(mes);
+  }
 
 
-public void SetMessageAtractCamera(Transform trans,string messagetext){
-SetMessageAtractCamera(trans,messagetext,null);
-}
-public void SetMessageAtractCamera(Transform trans,string messagetext,System.Action action){
-SetMessageAtractCamera(trans,messagetext,action,false);
-}
-public void SetMessageAtractCamera(Transform trans,string messagetext,System.Action action,bool autoprocess){
+public void SetMessageAtractCamera(Transform trans,string messagetext,System.Action action=null,bool autoprocess=false){
 
 lerpatractcamera(trans);
 
@@ -115,6 +110,11 @@ SetMessage(messagetext,autoprocess);
 
 public void atractend(){ 
 charaLookAtPosition=defaultcharaLookAtPosition;
+if (defaultparent!=null)
+{
+Player=defaultparent.gameObject.root().transform;
+}
+
 CameraSettingSet(defaultCameraSetting);
   transform.parent=defaultparent;  
   distance=defaultdistance;
@@ -167,12 +167,11 @@ distance*=-1;
 
 public void angleReset(){
 var parent=camera.parent;
-camera.parent=null;
+      camera.parent=null;
       Player.LookAt(camera,nowxyz.Gethight());
- Vector3 angle=Player.eulerAngles;
-
-Player.eulerAngles=nowxyz.Gethight(angle+new Vector3(180,180,180) ); 
-		rotaterate=0;
+      Vector3 angle=Player.eulerAngles;
+      Player.eulerAngles=nowxyz.Gethight(angle+new Vector3(180,180,180) ); 
+		  rotaterate=0;
       camera.parent=parent;
 }
 public float yaxis=1.8f;
@@ -194,10 +193,10 @@ public void recovercamera(){
 
 public void CameraControll(){
 
-if (keiinput.GetRotate().x!=0||learping||allwaysmove)
+if (rotation.x!=0||learping||allwaysmove)
 {
-   rotaterate+= keiinput.GetRotate().x*_rotatesensvilty;
-    rotateY+= keiinput.GetRotate().y/10;
+   rotaterate+= (float)rotation.x*_rotatesensvilty;
+    rotateY+= (float)rotation.y/10;
     rotateY=Mathf.Clamp(rotateY,-rotateYrange,rotateYrange);
 
      Vector3 vec=(new Vector3(Mathf.Sin(rotaterate)*distance,yaxis+rotateY,Mathf.Cos(rotaterate)*distance));
@@ -221,12 +220,16 @@ public bool learping;
 
 
 
-
+ Vector3 direction;
 
     void Update() {
-      
     
-Vector3 direction=keiinput.GetDpad();
+    if (keiinput!=null)
+    {
+      rotation=(Vector3)keiinput?.GetRotate();
+direction=(Vector3)keiinput?.GetDpad();
+    }
+
 if (ScrollWheel)
 {
     
@@ -241,20 +244,20 @@ if (direction.y!=0&&!once)
   	angleReset();
 once=true;
 _rotatesensvilty=0;
-   distance/=runclose;rotateY-=2;
+   distance/=runclose;rotateY/=runclose;
 }else if(direction.y==0&&once)
 {
     once=false;
     _rotatesensvilty=rotatesensvilty;
    distance*=runclose;
-   rotateY+=2;
+   rotateY*=runclose;
 }
 
 CameraControll();
            
         RaycastHit hit;
         //　キャラクターとカメラの間に障害物があったら障害物の位置にカメラを移動させる
-        if (Physics.Linecast(charaLookAtPosition.position, camera.position, out hit, obstacleLayer)) {
+        if (Physics.Linecast(charaLookAtPosition.position+ControllPos, camera.position, out hit, obstacleLayer)) {
             camera.position = hit.point;
         }
 

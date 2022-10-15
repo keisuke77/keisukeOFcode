@@ -13,10 +13,10 @@ AnimationCurve curve;
     void Awake()
     {
         button = GetComponent<Button>();
-        button.onClick.AddListener(OnClick);
+        button.onClick.AddListener(Click);
     }
 
-   public void OnClick()
+   public void Click()
     {if (button==null)
     {
         button.enabled=false;

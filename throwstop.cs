@@ -14,8 +14,8 @@ public bool parent;
 void OnCollisionStay(Collision collisionInfo)
 {if (!collisionInfo.gameObject.CompareTag("Player"))
 {if (parent)
-     {
-         transform.parent=collisionInfo.transform;
+     {System.Action ac=()=>transform.parent=collisionInfo.transform;
+        ac.delaycall(1f); 
      }
      rb.velocity=Vector3.zero;
      rb.isKinematic=true;

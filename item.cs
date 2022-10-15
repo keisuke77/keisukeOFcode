@@ -1,21 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.Events;
 public class item : effect
 {
-   
+   public UnityEvent eve;
 public float speedup=0.1f;
     public float effectpower;
     public float effectduration=5;
     public GameObject particle;
-    public float time;
    public Itemkind Itemkind;
    public bool instanceexiqitem;
    public bool rotate;
-   public float waittime=1.5f;
-    public animation textanim;
-    public int getscore=10;
+  
     public int money=0;
     bool once;
     public bool jump;
@@ -40,7 +37,10 @@ if (!once)
     
 once=true;
 
-    
+    if (eve!=null)
+    {
+        eve.Invoke();
+    }
     if (speedup!=0)
     {
         other.GetComponent<UnityChanControlScriptWithRgidBody>().movespeed+=speedup;
@@ -71,9 +71,7 @@ other.pclass().itemmanage.itemhavingcheck(Itemkind).itemuses();
             jumpgive(other.gameObject,effectpower,effectduration);
         }
          
-         if (textanim!=null)
-         { textanim.anim.Play();
-         } 
+      
     }
      Destroy(gameObject);
        
@@ -81,20 +79,12 @@ other.pclass().itemmanage.itemhavingcheck(Itemkind).itemuses();
 
 void OnTriggerEnter(Collider obj)
 {
-    if (time>waittime)
-    {
-        if (obj.CompareTag("Player"))
-    {execute(obj.gameObject);
+   
+        if (obj.proottag())
+    {execute(obj.root());
         }
-    }
+    
     
           }
 
-
-
-    // Update is called once per frame
-    void Update()
-    {
-        time+=Time.deltaTime;
-    }
 }

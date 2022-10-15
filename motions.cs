@@ -7,11 +7,12 @@ public class motions : ScriptableObject
 
     public Effekseer.EffekseerEffectAsset effect;
     public instanceobj instanceobj;
+    public GameObject instanceobjs;
     [Range(0,1)]
     public float timing;
     GameObject objs;
 public int damagevalue;
-public float radiusDamage;
+public float radiusDamageArea;
 public bodypart bodypart;
 public int[] triggernumber;
  [Range(0,1)]
@@ -30,18 +31,16 @@ TriggerDamage(obj);
 public void AnimEffect(GameObject obj){
 
     objs=obj;
-    obj.GetComponent<Animancer.AnimancerComponent>().Play(animation).Events.OnEnd = OnEnd;
+    obj.AddComponentIfnull<Animancer.AnimancerComponent>().Play(animation).Events.OnEnd = OnEnd;
   
 float latetime=animation.length*timing;
-    keikei.delaycall(()=>{obj.Play(effect);instanceobj.Instantiates(obj.transform);},latetime);
+    keikei.delaycall(()=>{obj.Play(effect);instanceobj?.Instantiates(obj.transform);instanceobjs?.Instantiate(obj.transform);},latetime);
 
 }
 
 
 public void TriggerDamage(GameObject obj){
 
-float starttime=animation.length*startdamagetime;
-float endtime=animation.length*enddamagetime;
 if (obj.GetComponentIfNotNull<triggeronoff>()!=null)
 {
    
@@ -63,15 +62,18 @@ if (bodypart!=bodypart.no)
 Collider c=bodypart.Getbodypart(obj).GetComponentIfNotNull<Collider>();
 c.gameObject.collset(damagevalue);
 
-TriggerCall(()=>c.enabled=true,starttime,()=>c.enabled=false,endtime);
+TriggerCall(()=>c.enabled=true,()=>c.enabled=false);
 
 }
 
-if (radiusDamage!=0)
-{foreach (var item in obj.RadiusSearchTag("E"))
+if (radiusDamageArea!=0)
+{foreach (var item in obj.RadiusSearch<hpcore>(radiusDamageArea))
+{if (obj!=item.gameObject)
 {
    
-}
+   item.damage(damagevalue,false,obj.Collider());
+
+}}
    
 }
 
@@ -97,6 +99,8 @@ TriggerCall(()=>trrigeronofflist.ontriger(),()=>trrigeronofflist.offtriger());
 
 void TriggerCall(System.Action ac,System.Action acs){
 
+float starttime=animation.length*startdamagetime;
+float endtime=animation.length*enddamagetime;
  keikei.delaycall(ac,starttime);
  keikei.delaycall(acs,endtime);
 

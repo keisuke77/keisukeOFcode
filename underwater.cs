@@ -9,17 +9,18 @@ using UnityEngine.Events;
 public class underwater : MonoBehaviour
 {
     public bool iswater;
-    public float time;
     public Camera camera;
     public UnityEvent enterevents;
     public UnityEvent exitevents;
 bool once;
-public PostProcessingProfile profile;
-public PostProcessingProfile defaults;
+public PostProcessingProfile waterprofile;
+PostProcessingProfile defaults;
 public PostProcessingBehaviour PostProcessingBehaviour;
+public Animator anim;
     // Start is called before the first frame update
     void Start()
     {
+        anim=GetComponent<Animator>();
         
     }
 
@@ -41,26 +42,26 @@ void OnTriggerExit(Collider other)
     {
     
 if (iswater)
-{keikei.playeranim.SetBool("swimming",true);
+{anim.SetBool("swimming",true);
  
 if (!once)
-{
-    enterevents.Invoke();
+{gameObject.GetComponent<IForceIdle>().AddForce(-Vector3.up);
+    enterevents?.Invoke();
     camera.transform.position=gameObject.transform.position;
- 
-       PostProcessingBehaviour.profile=profile;
+ defaults  =PostProcessingBehaviour.profile;
+       PostProcessingBehaviour.profile=waterprofile;
    once=true;
 }
 }else
 {
 if (once)
 {
-    exitevents.Invoke();
+    exitevents?.Invoke();
    camera.transform.position=gameObject.transform.position;
    once=false;
 }
     
-   keikei.playeranim.SetBool("swimming",false);
+   anim.SetBool("swimming",false);
   PostProcessingBehaviour.profile=defaults;
 }
 

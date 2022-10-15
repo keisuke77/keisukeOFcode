@@ -69,15 +69,22 @@ public static UnityEvent events;
      float autotime;
  public float cameradistance;
     void Awake() {
-        keikei.allMessage=Object.FindObjectsOfType(typeof(message))as message[];
-        
+         
         clickIcon.enabled = false;
          messageText.text = "";
-          messagecanvas.enabled=false;
-               if (onstart)
+          messagecanvas.enabled=false; keikei.allMessage=Object.FindObjectsOfType(typeof(message))as message[];
+         
+            
+       }
+
+
+
+       void LateStart()
+       {    if (onstart)
            {
                SetMessagePanel(allMessage);
-           }     
+           } 
+        
        }
  public void extends(){
 
@@ -216,7 +223,7 @@ action=null;
         }          
               }
     //　新しいメッセージを設定
-   void SetMessage(string message) {
+  public void SetMessage(string message) {
       
         this.allMessage = message;
         //　分割文字列で一回に表示するメッセージを分割する
@@ -233,23 +240,9 @@ action=null;
         }
         
     }
-    //　他のスクリプトから新しいメッセージを設定しUIをアクティブにする
-    public void SetMessagePanel(string message) {
-        
-        SetMessagePanel(message,false);
-     
-    } 
-    public void SetMessagePanel(string message,Image icons) {
-        SetMessagePanel(message,false,icons);
-     
-    }
-  public void SetMessagePanel(string message, bool a) {
-
-SetMessagePanel(message,a,(Sprite)null);
-
-    }  public void SetMessagePanel(string message, bool a,Image icons) {
+  public void SetMessagePanel(string message, bool a=false,Image icons=null) {
        
-       SetMessagePanel(message,a,icons.sprite);
+       SetMessagePanel(message,a,icons?.sprite);
        
     } 
     

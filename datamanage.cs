@@ -10,7 +10,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 public class datamanage : MonoBehaviour
 {
-    public Text text;
+  
     public static bool pos;
     public data data;
     public hp hp;
@@ -23,7 +23,6 @@ public class datamanage : MonoBehaviour
     public void addmoney(int amount){
 
     data.addmoney(amount);
-    keikei.uijump(text.transform,100);
     }
     
     private static string TypeNameToString(string type)
@@ -74,7 +73,9 @@ UnityChanControlScriptWithRgidBody.backwardSpeed=data.backwardSpeed;
 UnityChanControlScriptWithRgidBody.rotateSpeed=data.rotateSpeed;
         data.Itemkind=itemcurrent.Itemkind;
  data.HP= hp.HP;
-
+if(data.HP==0){
+    data.HP=hp.maxHP;
+}
   }
     // Start is called before the first frame update
     void Start()
@@ -108,10 +109,7 @@ public void HPreset(){
     // Update is called once per frame
     void Update()
     {       
-        if (text!=null)
-    {
-          text.text="所持金:"+data.money.ToString()+"\n"+data.nowquest.textinpress();
-    }      nowdata=data;
+             nowdata=data;
         dataupdate();
       
         }

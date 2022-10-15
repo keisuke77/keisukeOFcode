@@ -54,8 +54,9 @@ nowobj=objlist[active];
 if (objlist[active].GetComponent<Collider>()!=null)
 {
 	
-
+objlist[active].GetComponent<Collider>().isTrigger=true;
 trigeronoff.obj=objlist[active].GetComponent<Collider>();
+
 }
 if (objlist[active].GetComponent<interactionenter>()!=null)
 {

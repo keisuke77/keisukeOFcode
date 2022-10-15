@@ -62,8 +62,8 @@ if (particle!=null)
 Instantiate(particle,transform.position,Quaternion.identity);
 }
    
+ gameObject.destroyObject(power);
    itemdrop?.itemappenddrop(gameObject);
- gameObject.destroyObject();
 }
 
 

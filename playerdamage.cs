@@ -34,9 +34,12 @@ if (trip)
 
     
 public void ondamage(GameObject obj){
-
+if (!obj.proottag())
+{
+    return;
+}
     
-obj.PlayerDamage(damagevalue);
+obj.GetComponent<hpcore>().damage(damagevalue,true,gameObject);
       if (hitdespawn)
       {
           Destroy(gameObject);

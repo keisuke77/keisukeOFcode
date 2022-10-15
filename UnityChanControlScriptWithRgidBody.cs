@@ -12,9 +12,13 @@ public enum directionXYZ
 {front,horizon,height
 	 
 }
+interface IForceIdle
+{
+void AddForce(Vector3 force);	
+}
 // 必要なコンポーネントの列記
 	[RequireComponent(typeof(Animator))]
-	public class UnityChanControlScriptWithRgidBody : MonoBehaviour
+	public class UnityChanControlScriptWithRgidBody : MonoBehaviour,IForceIdle
 	{
 
 	public Rigidbody rb;
@@ -119,7 +123,11 @@ public void damageheal(){
 	 void Awake()
 	{
 	UpdateControlObj();
-
+		 hp=GetComponent<hp>();
+			 mp=GetComponent<mp>();
+			anim = GetComponent<Animator> ();
+			// CapsuleColliderコンポーネントを取得する（カプセル型コリジョン）
+			col = gameObject.GetComponentIfNotNull<CapsuleCollider> ();
       
 		keikei.player=this.gameObject;
 			keikei.playerset();
@@ -130,15 +138,15 @@ public void damageheal(){
 
 
 		void UpdateControlObj(){
-        rb=ControlObj.AddComponentIfNotNull<Rigidbody>();
+        rb=ControlObj.AddComponentIfnull<Rigidbody>();
 		rb.constraints = RigidbodyConstraints.FreezeRotation;
 
-		 controller=ControlObj.AddComponentIfNotNull<CharacterController>();
+		 controller=ControlObj.AddComponentIfnull<CharacterController>();
 		trans=ControlObj.transform;
 AutoRotateCamera.lerpatractcamera(trans);
 AutoRotateCamera.Player=trans;
 AutoRotateCamera.nowxyz=nowxyz;
-anim=ControlObj.AddComponentIfNotNull<Animator>();
+anim=ControlObj.AddComponentIfnull<Animator>();
 		}
 
 
@@ -151,8 +159,7 @@ public void resetxyz(){
 nowxyz=defaultxyz;
 }
 		void Start ()
-		{ 
-	downSprite.CreateImage(gameObject);  resetxyz();
+		{   resetxyz();
 			keikei.Allplayer.Add(gameObject);
 		 charges=new charges(gameObject);
 		 itemcurrent=gameObject.pclass().itemcurrent;
@@ -161,11 +168,7 @@ AutoRotateCamera.nowxyz=nowxyz;
 			 keiinput=gameObject.pclass().keiinput;
 			 playeremitter=gameObject.root().GetComponent<Effekseer.EffekseerEmitter>();
 			
-			 hp=GetComponent<hp>();
-			 mp=GetComponent<mp>();
-			anim = GetComponent<Animator> ();
-			// CapsuleColliderコンポーネントを取得する（カプセル型コリジョン）
-			col = GetComponent<CapsuleCollider> ();
+	
 	//メインカメラを取得する
 			cameraObject = GameObject.FindWithTag ("MainCamera");
 			// CapsuleColliderコンポーネントのHeight、Centerの初期値を保存する
@@ -237,7 +240,7 @@ if (falldamage>10)
 {
 anim.SetTrigger("ground");
 	
-hp.damage((int)falldamage,false,true,false);
+hp.damage((int)falldamage);
 }else{
 
 	
@@ -252,10 +255,24 @@ if (rigidcontroll)
 	rb.AddForce(force,ForceMode.Impulse);
 }else
 {
-	
- controller.Move(force);
-
+ StartCoroutine(AddForces(force));
 }
+}
+
+IEnumerator AddForces(Vector3 force)
+{
+var forcepart=force/10;
+	var temp=forcepart;
+	
+	while (forcepart.sqrMagnitude<force.sqrMagnitude)
+	{
+		controller.Move(temp);
+forcepart+=temp;
+
+yield return new WaitForSeconds(0.0001f);
+	}
+
+	yield return null;
 }
 
 public void freehandattack(){
@@ -268,7 +285,6 @@ if (keiinput.guard)
           if (mp.mpuse(8))
           {
              anim.SetBool("kaihi",true);
-	  
           }
 	}
      
@@ -348,7 +364,7 @@ public void MoveInput(){
 
 if (stop)
 {h=0;v=0;
-	return ;
+	return;
 }
 
 Vector2 dpad= keiinput.GetDpad();
@@ -357,7 +373,10 @@ v = dpad.y;
  
 h=h.NotMini();
 v=v.NotMini();
-
+if (v==0)
+{
+	h=0;
+}
 
 if (keiinput.dashduring)
 {
@@ -378,32 +397,9 @@ anim.SetFloat ("DirectionXdirectionXYZ", h);
 
 
 }
-public float xGet(){
-switch (nowxyz.x)
-{
-	case directionXYZ.front: return forward;
-		break;case directionXYZ.height: return height;
-		break;case directionXYZ.horizon: return h;
-		break;
-	default:return 0;
-		break;
-}
 
-}
-public float yGet(){
-switch (nowxyz.y)
-{
-	case directionXYZ.front: return forward;
-		break;case directionXYZ.height: return height;
-		break;case directionXYZ.horizon: return h;
-		break;
-	default:return 0;
-		break;
-}
-
-}
-public float zGet(){
-switch (nowxyz.z)
+public float GetDirection(directionXYZ directionXYZ){
+switch (directionXYZ)
 {
 	case directionXYZ.front: return forward;
 		break;case directionXYZ.height: return height;
@@ -449,7 +445,7 @@ public Vector3 CalcVelocity(){
 				forward=0;
 			   }
 
-	velocity = new Vector3 (xGet(), yGet(), zGet());
+	velocity = new Vector3 (GetDirection(nowxyz.x), GetDirection(nowxyz.y), GetDirection(nowxyz.z));
 
 	
 	// キャラクターのローカル空間での方向に変換
@@ -525,7 +521,7 @@ MoveInput();
 		 LastMoveValue=	CalcVelocity() * Time.deltaTime*movespeed;
 		if (rigidcontroll)
 		{
-			rb.velocity=LastMoveValue;
+			rb.velocity=LastMoveValue*2;
 			controller.enabled=false;
 			rb.isKinematic=false;
 		}else

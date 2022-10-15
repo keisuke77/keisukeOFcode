@@ -45,6 +45,7 @@ public void addexp(int amount){
 deltaexp+=amount;
     exp+=amount;
 
+warning.message(amount.ToString()+"xpを獲得した");
      if ((nextexp-exp)<=0)
         {
             levelup();
@@ -53,10 +54,6 @@ keikei.delaycall(()=>addexp(exp-nextexp),2f);
 }
 
 
-public void Getexp(int value){
-exp+=value;
-warning.message(value.ToString()+"xpを獲得した");
-}
  public int levelup(){
      
 warning.message("おめでとう！あなたはレベル"+level.ToString()+"になった！");

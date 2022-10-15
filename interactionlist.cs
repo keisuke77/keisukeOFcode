@@ -12,11 +12,17 @@ public int count;
 public int childCount;
 public GameObject panel;
  bool once=true;
- 
+ public static interactionlist Instance;
+ void Awake()
+ {
+    Instance=this;
+      
+ }
     // Start is called before the first frame update
     void Start()
-    {
+    { 
        gameObject.pclass().interactionlist=this;
+       
         childCount=panel.transform.childCount;
         buttons=new Button[20];
         for (var i = 0; i < childCount; i++)

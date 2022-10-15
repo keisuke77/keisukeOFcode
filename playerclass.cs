@@ -9,6 +9,7 @@ public itemmanage itemmanage;
 public datamanage datamanage;
 public Effekseer.EffekseerEmitter playeremitter;
 public interactionlist interactionlist;
+public itemuseplace itemuseplace;
     
 	void Awake () 
 	{playeremitter=GetComponent<Effekseer.EffekseerEmitter>();

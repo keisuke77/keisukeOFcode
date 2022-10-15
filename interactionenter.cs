@@ -4,11 +4,6 @@ using DG.Tweening;
 
 
 
-public class hoge{
-public hoge _hoge;
-public string hage;
-}
-
 public class interactionenter : MonoBehaviour
 {
 public bool cooldown;
@@ -47,9 +42,12 @@ cooldowntime=1;
 
 
 void OnDestroy()
+    {if (once)
     {
-         keikei.interactionlist.deleteinteraction(nowinteraction.count);
+       nowinteraction?.deleteinteraction();
 
+    }
+        
     }
 
 

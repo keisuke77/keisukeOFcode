@@ -24,30 +24,38 @@ message(text,1);
 
 
 }
+public static GameObject obj;
+public static float Ypos;
 public static void message(string text,int number){
 
-
-  var a= Instantiate(messages[number],messages[number].transform.position,Quaternion.identity);
+if (obj)
+{
+  Ypos+=100;
+}else
+{
+  Ypos=0;
+}
+  obj= Instantiate(messages[number],messages[number].transform.position+new Vector3(0,Ypos,0),Quaternion.identity);
 
   
-a.GetComponentsInChildren<TextMeshPro>().ToList().ForEach(n=>n.SetText(text));
+obj.GetComponentsInChildren<TextMeshPro>().ToList().ForEach(n=>n.SetText(text));
 
 
 
 
-if (a.GetComponentInChildren<Text>()!=null)
+if (obj.GetComponentInChildren<Text>()!=null)
 {
   
-a.GetComponentInChildren<Text>().text=text;
+obj.GetComponentInChildren<Text>().text=text;
 
-}else if(a.GetComponentInChildren<TextMeshProUGUI>()!=null)
+}else if(obj.GetComponentInChildren<TextMeshProUGUI>()!=null)
 {
 
 
   
 
 }
-Destroy(a,4);
+Destroy(obj,4);
 
 } 
 

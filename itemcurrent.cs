@@ -21,6 +21,8 @@ public GameObject Player;
   mp mp;
   Itemkind noitem;
  
+ public Text explain;
+ public Text selectText;
  public Text numbertext;
  GameObject freeobj;
    Transform tran;
@@ -30,37 +32,42 @@ public Image backresistanceimage;
 itemmanage itemmanage;
 public charges charges;
 keiinput keiinput;
-    // Start is called before the first frame update
+  
+    void Awake()
+    {
+     	 gameObject.pclass().itemcurrent=this; 
+           instance=this;
+    }
+
+
     void Start()
     { keiinput=gameObject.pclass().keiinput;
     
+      itemmanage=gameObject.pclass().itemmanage;
+      
 		  charges=new charges(gameObject);
-		 gameObject.pclass().itemcurrent=this;
-   itemmanage=gameObject.pclass().itemmanage;
-         instance=this;
+	  
 	 tran=gameObject.root().transform;
         noitem=keikei.noitem;
         data=gameObject.acessdata();  
+ 
         playeriteminventory=data.saveiteminventory;
-      
-        Player=gameObject.root();
+    Player=gameObject.root();
         objchange= Player.GetComponent<objectchange>();
         UnityChanControlScriptWithRgidBody=Player.GetComponent<UnityChanControlScriptWithRgidBody>();
-  
-if (Itemkind==null)
-{
-   Itemkind=noitem;
-}image=GetComponent<Image>();
-image.sprite=Itemkind.GetIcon();
+  image=GetComponent<Image>();
 
 hp=Player.GetComponent<hp>();
-itemmanage.imagecreate();
+itemmanage.imagecreate();  
+ setitem(data.Itemkind);
+    image.sprite=Itemkind?.GetIcon();
+        
     mp=Player.GetComponent<mp>();
+  
     }
 
   
 public void returnitem(){ 
-     objchange.objhide();
      itemmanage.additem(Itemkind,false);
      removeitem();
 }
@@ -72,6 +79,7 @@ public void removeitem(){
         resistanceimage.enabled=false;
         backresistanceimage.enabled=false;
 }
+
 public void itemchange(){
  objchange.objhide();
  UnityChanControlScriptWithRgidBody.defenceend();
@@ -86,16 +94,17 @@ if (Itemkind.GetKindOfItem().ToString()=="useWeapon"||Itemkind.GetKindOfItem().T
     numbertext.text="";
 }
 }
+
+
 public void itemused(){
 
 if (Itemkind.GetKindOfItem().ToString()=="Weapon"){
 removeitem();
-}else 
-if (Itemkind.GetKindOfItem().ToString()=="useWeapon"||Itemkind.GetKindOfItem().ToString()=="placeitem")
-{   Itemkind.downnumber();
-    keikei.itemnumtext(Itemkind,numbertext);
+}  
+Itemkind.downnumber();
+   
 }
-}
+
 
 public void weapontriggerSet(){
 gameObject.root().GetComponent<triggeronoff>().obj=objchange.Getobj().GetComponent<Collider>();  
@@ -106,21 +115,14 @@ public void setitem(Itemkind Itemkinds){
      GetComponent<Image>().sprite=Itemkinds.GetIcon();
   if (Itemkind!=Itemkinds)
   { 
-       
-    
-       objchange.objhide();
-    
+objchange.objhide();
   keikei.scalechange(GetComponent<RectTransform>());
   }
   if (playeriteminventory.additem(Itemkind,false))
   {
        itemmanage.imagecreate();
   }
-        
-  
-  
-  Itemkind=Itemkinds;
-data.Itemkind=Itemkind;
+    Itemkind=Itemkinds;
 
 if (Itemkind.GetKindOfItem().ToString()=="Weapon"){
 warning.message(Itemkind.GetItemName()+"を装備した");
@@ -162,10 +164,15 @@ Itemkind.Resitance-=damage;
   
 
     // Update is called once per frame
-    void Update()
-    {     ItemFunction(); 
-      resistanceimage.fillAmount = (float)Itemkind.Resitance/Itemkind.oriResitance;
- 
+    void LateUpdate()
+    {   
+if (Itemkind==null)
+{
+   Itemkind=noitem;
+}  
+ItemFunction(); 
+resistanceimage.fillAmount = (float)Itemkind.Resitance/Itemkind.oriResitance;
+data.Itemkind=Itemkind;
 numbertexts();
 
       

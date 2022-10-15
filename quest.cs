@@ -26,11 +26,11 @@ public void enemykill(string name){
 restenemy[name]-=1;
 if (restenemy[name]==0)
 {
-warning.message("クエストターゲット"+name+"を全て倒した！",2);
+warning.message("クエストターゲット"+name+"を全て倒した！");
 }else
 {
-warning.message("クエストターゲット"+name+"を倒した！/n残りは"+
-restenemy[name]+"体だ！",2);
+warning.message("クエストターゲット"+name+"を倒した！\n残りは"+
+restenemy[name]+"体だ！");
 }
 questclearcheck();
 }

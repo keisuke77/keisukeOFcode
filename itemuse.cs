@@ -12,7 +12,6 @@ public class itemuse : MonoBehaviour
    public itemcurrent itemcurrent;
 public Text numbertext;
  Animator anim;
- public Text explain;
  public int debug;
  public static itemuse instance;
  public Image itemimage;
@@ -26,14 +25,10 @@ public Text numbertext;
     // Start is called before the first frame update
    void Awake()
    {hp=gameObject.root().GetComponent<hp>();
-    itemmanage=gameObject.pclass().itemmanage;
-  
-   datamanage=gameObject.pclass().datamanage;
-  
        itemimage=GetComponent<Image>();
       rectTransform=GetComponent<RectTransform>();
      numbertext=GetComponentInChildren<Text>();
-       
+        instance=this;
    }
 void OnEnable()
 {
@@ -45,13 +40,12 @@ void OnEnable()
 }
     void Start()
     {  Player=gameObject.root();
-        instance=this;
-       iteminventory=gameObject.getinventory();
-      UnityChanControlScriptWithRgidBody=Player.GetComponent<UnityChanControlScriptWithRgidBody>();
+        itemmanage=gameObject.pclass().itemmanage;
+        datamanage=gameObject.pclass().datamanage;
+        iteminventory=gameObject.getinventory();
+        UnityChanControlScriptWithRgidBody=Player.GetComponent<UnityChanControlScriptWithRgidBody>();
          itemcurrent=gameObject.pclass().itemcurrent;
         anim=Player.GetComponent<Animator>();
-
-        
 
     }
 
@@ -71,7 +65,6 @@ if (itemimage!=null)
  itemimage.setA(255);
   
      numbertext.enabled=true;
-keikei.itemnumtext(a,numbertext);
     
 }}
 
@@ -80,7 +73,8 @@ public void delateitem(){
 Itemkind=null;
     
 if (itemimage!=null)
-{  itemimage.setA(0);numbertext.enabled=false;
+{  itemimage.setA(0);
+numbertext.enabled=false;
 }
 }
 
@@ -115,25 +109,16 @@ public void enduse(){
 itemusing=false;
 }
 
+
+public bool moucing;
 void OnMouseEnter()
 {
-    explaintext();
+moucing=true;
 }
 void OnMouseExit()
 {
-    deletetext();
+   moucing=false;
 }
-public void explaintext(){
-
-
-    explain.text=Itemkind.GetItemName()+Itemkind.GetInformation();
-}
-public void deletetext(){
-
-
-    explain.text="インベントリ";
-}
-
 
 public void equiped(){
 
@@ -225,13 +210,35 @@ itemused();
 break;
 
   default:
+  if (Itemkind.GetKindOfItem().ToString()=="UseItem")
+  {
+  if (gameObject.pclass().itemuseplace?.Itemkind==Itemkind)
+  {
+    gameObject.pclass().itemuseplace.eve.Invoke();
+  }else
+  {
+  warning.warn("このアイテムはここでは使えません");
+    
+  }
+  }
+  
     break;
 }
            }
           
+
     // Update is called once per frame
     void Update()
     {
         cooltime+=Time.deltaTime;
+        if (Itemkind!=null)
+        {
+keikei.itemnumtext(Itemkind,numbertext);
+        }
+
+        if (moucing)
+        {
+          itemcurrent.selectText.text=Itemkind.GetItemName()+Itemkind.GetInformation();
+        }
     }
 }

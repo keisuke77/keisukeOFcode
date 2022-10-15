@@ -22,7 +22,7 @@ enemyattack enemyattack;
   GetComponent<navchaise>().cantchasedis=enemystatus.patroldistance;
   GetComponent<navchaise>().patrollspeed=enemystatus.patrollspeed;
   GetComponent<navchaise>().message=enemystatus.discovermessage; 
-   GetComponent<navchaise>().icon=enemystatus.icon;
+  GetComponent<navchaise>().icon=enemystatus.icon;
   GetComponent<enemyattackcore>().basedamagevalue=enemystatus.power;
   GetComponent<Transform>().localScale=Vector3.one*enemystatus.scale;
     }

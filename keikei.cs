@@ -325,15 +325,13 @@ foreach (var item in Allplayer)
 }
 }
 
-    public static void dissolvedeath(GameObject obj)
-    {dissolvedeath(obj,null);
-      
-    }public static void dissolvedeath(GameObject obj,System.Action action)
+   public static void dissolvedeath(GameObject obj,System.Action action=null)
     {
      var disolve= obj.GetComponentIfNotNull<U10PS_DissolveOverTime>();
 disolve.dissolvevanish(action);
   
     }
+
     
     public static void shake()
     {
@@ -508,8 +506,8 @@ delaycall(ac,duration);
 
 public static void bothlook(GameObject obj1,GameObject obj2){
 
-obj1.transform.forward=obj2.transform.forward;
-obj2.transform.forward=obj1.transform.forward;
+obj1.transform.forward=obj2.transform.position;
+obj2.transform.forward=obj1.transform.position;
   
 }
 
@@ -754,14 +752,6 @@ DOVirtual.DelayedCall(delay, () => action());
 }
 
 
-public static void whilecall(System.Action action,float duration){
-   action.whilecall(duration);
-}
-
-public static void delayAndwhilecall(System.Action action,float delay,float duration){
-   delaycall(()=>whilecall(action,duration),delay);
-
-}
 
 
 
@@ -808,7 +798,7 @@ public static RaycastHit raycast(){
         cooldown=true;
       }
     }
- public static void bossappend(GameObject a,System.Action action){
+ public static void bossappend(GameObject a,System.Action action=null){
         var sequence = DOTween.Sequence(); //Sequence生成
     //Tweenをつなげる
     sequence.Append(a.transform.DOMoveY(10, 2).SetRelative(true))
@@ -822,7 +812,7 @@ action();
     });
     }
     
-    public static void mobappend(GameObject a,System.Action action){
+    public static void mobappend(GameObject a,System.Action action=null){
         var sequence = DOTween.Sequence(); //Sequence生成
     //Tweenをつなげる
     sequence.Append(a.transform.DOMoveY(10, 1).SetRelative(true))
@@ -834,13 +824,8 @@ action();
 action();
     });
     }
- public static void itemappend(GameObject a,Transform b,float power){
 
-
-itemappend(instantiate(a,b),power); 
-
- }
- public static void itemappend(GameObject a,Transform b,float power,float number){
+ public static void itemappend(GameObject a,Transform b,float power,float number=1){
 
 for (int i = 0; i < number; i++)
 {
@@ -849,10 +834,8 @@ itemappendRandom(instantiate(a,b),power);
 }
 
  }
-    public static void itemappend(GameObject a){
-       itemappend(a,1);
-    }  
-     public static void itemappend(GameObject a,float power){
+  
+     public static void itemappend(GameObject a,float power=1,System.Action action=null){
         var sequence = DOTween.Sequence(); //Sequence生成
     //Tweenをつなげる
     sequence.Append(a.transform.DOMoveY(6*power, 1).SetRelative(true))
@@ -860,21 +843,12 @@ itemappendRandom(instantiate(a,b),power);
              .Join(a.transform.DOScale(1, 1).SetRelative(true))
              .Join(a.transform.DORotate(new Vector3(0, 1000,0),1f)) 
          .Append(a.transform.DOMoveY(-5.5f*power, 2).SetRelative(true))
-         .Join(a.transform.DORotate(new Vector3(0, -500,0),1f));
-    } 
-     public static void itemappend(GameObject a,System.Action action){
-        var sequence = DOTween.Sequence(); //Sequence生成
-    //Tweenをつなげる
-    sequence.Append(a.transform.DOMoveY(6, 1).SetRelative(true))
-    .Join((a.transform.DOMoveX(2, 1).SetRelative(true)) )  
-             .Join(a.transform.DOScale(1, 1).SetRelative(true))
-             .Join(a.transform.DORotate(new Vector3(0, 1000,0),1f)) 
-         .Append(a.transform.DOMoveY(-5.5f, 2).SetRelative(true))
          .Join(a.transform.DORotate(new Vector3(0, -500,0),1f)).AppendCallback(()=>
     {
 action();
     });
-    }
+    } 
+    
     
       public static void itemappendRandom(GameObject a,float power){
         var sequence = DOTween.Sequence();
@@ -930,22 +904,12 @@ Destroy(child.gameObject);
         }
            }
            
-           public static void fadedeath(GameObject a){
+       public static void fadedeath(GameObject a,float num=1){
  
-      fadedeath(a,1);
+    var fader=  a.AddComponentIfnull<fader>()as fader;
+         fader.isFadeOut=true;
+         Destroy(a,3);
         
-           }public static void fadedeath(GameObject a,float num){
- 
-      
-          var mat= a.GetComponent<Renderer>().material;
-           materialmode.SetBlendMode(mat,materialmode.Mode.Cutout);
-          
- var sequence = DOTween.Sequence(); //Sequence生成
-    //Tweenをつなげる
-    sequence.Append(mat.DOFade(0.0F, num)).AppendCallback(()=>
-    {
-Destroy(a);
-    });
            }
      
  public static void playerset()

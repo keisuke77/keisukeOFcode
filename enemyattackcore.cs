@@ -24,22 +24,22 @@ if (crit)
 }
 			var damagevalues = crit == true ? (int)(damagevalue * CritMultiplier) : damagevalue;
 			damagevalues+=basedamagevalue;
-  other.root().GetComponent<hp>().damage((int)damagevalues,crit,sequencehit);
-
-if (keikei.UnityChanControlScriptWithRgidBody.defences)
+      
+      
+      if (other.root().GetComponent<hpcore>().damage((int)damagevalues,crit,other.Collider(),sequencehit))
+      {
+  if (force)
+  {
+other.root().GetComponent<IForceIdle>().AddForce(transform.forward*forcepower);
+  }
+      }
+ 
+if (other.gameObject.GetComponentIfNotNull<UnityChanControlScriptWithRgidBody>().defences)
 {
       keikei.Effspawn(keikei.effects[2],transform);
         keikei.backforce(transform.root.gameObject,20);
- 
 }
 
-
-  if (force)
-  {
-      
-other.root().GetComponent<Rigidbody>().AddForce(transform.forward*forcepower,ForceMode.Impulse);
-
-  }
 	
 }
 }

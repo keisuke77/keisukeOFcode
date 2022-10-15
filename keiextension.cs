@@ -66,37 +66,35 @@ public static class keiextension { public static Effekseer.EffekseerHandle handl
 
 return obj.EffspawnPlayer(effect);
     }
-  public static Effekseer.EffekseerHandle EffspawnPlayer(this GameObject obj,Effekseer.EffekseerEffectAsset effect){
-if (effect!=null)
-{
-handle= effect.Play(obj.transform);;
-}
-    // transformの回転を設定する。
- return handle;
-    }   
-    public static Effekseer.EffekseerHandle EffspawnPlayer(this GameObject obj,Effekseer.EffekseerEffectAsset effect,float during){
-   handle= obj.EffspawnPlayer(effect);
-
- keikei.delaycall(()=>handle.Stop(),during);
-
  
+    public static Effekseer.EffekseerHandle EffspawnPlayer(this GameObject obj,Effekseer.EffekseerEffectAsset effect,float duration=0){
+ if (effect!=null)
+{
+   handle= obj.EffspawnPlayer(effect);
+}
+if (duration>0)
+{
+ keikei.delaycall(()=>handle.Stop(),duration);
+}
 return handle;
     // transformの回転を設定する。
     } 
 
 
-public static void scalechange(this GameObject target,float num,float speed){
+public static void ScaleUpper(this Transform trans,float speed=1){
+ Vector3 basescale= trans.localScale;
+ trans.localScale=Vector3.zero;
+trans.DOScale(basescale,speed);
+}
+public static void scalechange(this GameObject target,float num,float speed=1){
     target.transform.DOScale(
     target.transform.localScale*num, // スケール値
     speed                    // 演出時間
 ); 
 }
-public static void scalechange(this GameObject target,float num){
-   target.scalechange(num,1);
-}
 
 
-    public static void delay(this Action action,float time){
+    public static void delaycall(this System.Action action,float time){
 keikei.delaycall(action,time);
     }
      public static void EffspawnPlayerStop(this GameObject obj){
@@ -125,13 +123,49 @@ catch (System.Exception e)
 }
 
 
-  public static GameObject CreateImage(this Sprite sprite,GameObject obj){
-var im=("CustomImage").ResourcesLoad();
-im= im.Instantiate(obj.transform);
-im.GetComponent<Image>().sprite=sprite;
-im.transform.parent=obj.transform;
+public static GameObject ChildFind(this Transform trans,string name){
+
+var child=trans.GetComponentsInChildren<Transform>();
+foreach (Transform item in child)
+{if (item.gameObject.name==name)
+{
+  return item.gameObject;
+}
+  
+}
+return null;
+}
+
+public static void ButtonEventSet(this Button btn,System.Action ac){
+btn.onClick.AddListener(()=>ac());
+}
+public static GameObject yesno(this string st,System.Action yes=null,System.Action no=null){
+
+var im=("YesNo").ResourcesLoad();
+im=im.Instantiate(im.transform);
+im.transform.ScaleUpper();
+im.transform.ChildFind("yesbutton").GetComponent<Button>().onClick.AddListener(()=>yes());
+im.transform.ChildFind("yesbutton").GetComponent<Button>().onClick.AddListener(()=>{keikei.destroy(im);});
+im.transform.ChildFind("nobutton").GetComponent<Button>().onClick.AddListener(()=>{keikei.destroy(im);});
+im.transform.ChildFind("nobutton").GetComponent<Button>().onClick.AddListener(()=>no());
+im.transform.ChildFind("QuestionText").GetComponent<Text>().DOText(st,1);
 return im;
 
+}
+
+
+  public static GameObject CreateImage(this Sprite sprite,GameObject obj){
+return sprite.CreateImage(obj,Vector3.zero);
+  }
+
+  public static GameObject CreateImage(this Sprite sprite,GameObject obj,Vector3 pos){
+var im=("CustomImage").ResourcesLoad();
+im= im.Instantiate(obj.transform);
+im.gameObject.AddComponentIfnull<UIcameralook>();
+im.GetComponent<Image>().sprite=sprite;
+im.transform.parent=obj.transform;
+im.transform.localPosition=  pos;
+return im;
   }
 public static GameObject ResourcesLoad(this string name){
   
@@ -151,9 +185,8 @@ return (GameObject)Resources.Load(name);
 }
 
 
-
   public static bool keydown(this KeyCode[] keycodes){
-  foreach (var item in keycodes)
+  foreach (KeyCode item in keycodes)
   {
    if (item.keydown())
    {
@@ -163,7 +196,7 @@ return (GameObject)Resources.Load(name);
   return false;
 }
 public static bool keyup(this KeyCode[] keycodes){
-  foreach (var item in keycodes)
+  foreach (KeyCode item in keycodes)
   {
    if (item.keyup())
    {
@@ -207,14 +240,18 @@ return Input.GetKeyUp(KeyCode);
 public static bool keyhold(this KeyCode KeyCode){
 return Input.GetKey(KeyCode);
 }
- public static T1 AddComponentIfnull<T1>(this GameObject obj){
+ public static T1 AddComponentIfnull<T1>(this UnityEngine.GameObject obj)where T1:UnityEngine.Component
+ {
+if (obj==null)
+{
+  return default(T1);
+}
 
-if (obj.GetComponent<T1>()==null)
+if(obj.GetComponent<T1>()==null)
 {obj.AddComponent(typeof(T1));
   return obj.GetComponent<T1>();
 }else
 {return obj.GetComponent<T1>();
-  
 }
 
  }
@@ -278,7 +315,6 @@ public static data acessdata(this GameObject obj){
     yield return new WaitForSeconds(waitTime);
     action();
   }
-
 
 
 public static Vector3 To(this Vector3 vec,Vector3 to,float rate){
@@ -365,42 +401,29 @@ return Mathf.Infinity;
 
 
 
-public static void destroy(this GameObject obj,float time)
+public static void destroy(this GameObject obj,float time=0)
 {
 keikei.destroy(obj,time);
 }
-public static void fadedestroy(this GameObject obj,float time)
+public static System.Action fadedestroy(this GameObject obj,float time=1)
 {
-keikei.fadedeath(obj,time);
+  System.Action ac=()=>{
+keikei.fadedeath(obj,time);};
+  return ac;
 }
-public static void destroy(this GameObject obj)
-{
-obj.destroy(0);
-}
-public static void destroyObject(this GameObject obj)
-{
-    var random = new System.Random();
-    var min = -3;
-    var max = 3;
-    obj.GetComponentsInChildren<Rigidbody>().ToList().ForEach(r => {
-        r.isKinematic = false;
-        r.transform.SetParent(null);
-        r.gameObject.fadedestroy(2f);
-        var vect = new Vector3(random.Next(min, max), random.Next(0, max), random.Next(min, max));
-        r.AddForce(vect, ForceMode.Impulse);
-        r.AddTorque(vect, ForceMode.Impulse);
-    });
-    obj.destroy();
-}
-public static void PlayerDamage(this GameObject obj,int damagevalue){
 
 
-    if (obj.proottag()){
+public static void AddComponentsIfNullInChildren<T>(this UnityEngine.GameObject obj)where T:UnityEngine.Component
+{
 
-    obj.gameObject.GetComponent<hp>().damage(damagevalue);
-   
+foreach (var item in obj.GetAllChild())
+{
+  item.AddComponentIfnull<T>();
 }
+
 }
+
+
 public static Camera Getplayercamera(this GameObject obj){
 
  return obj.root().GetComponent<playerclass>().AutoRotateCamera.GetComponent<Camera>();
@@ -410,6 +433,36 @@ public static Camera Getplayercamera(this GameObject obj){
   com.gameObject.SetActive(bools);
     return com.gameObject;
   }
+
+
+  
+public static void destroyObject(this GameObject obj,float power=1)
+{
+    var random = new System.Random();
+    var min = -3;
+    var max = 3;
+foreach (var item in obj.GetAllChild())
+{
+  if (item.GetComponent<Collider>()!=null)
+  {keikei.delaycall(()=>{ item.GetComponent<Collider>().enabled=true;
+    item.GetComponent<Collider>().isTrigger=false;
+},0.3f);
+   
+  }
+}
+    obj.AddComponentsIfNullInChildren<Rigidbody>();
+    obj.GetComponentsInChildren<Rigidbody>().ToList().ForEach(r => {
+        r.isKinematic = false;
+        r.transform.SetParent(null);
+        r.gameObject.fadedestroy().delaycall(2);
+        var vect = new Vector3(random.Next(min, max), random.Next(0, max), random.Next(min, max));
+        vect*=power;
+        r.AddForce(vect, ForceMode.Impulse);
+        r.AddTorque(vect, ForceMode.Impulse);
+    });
+    obj.destroy();
+}
+
   public static bool nullchecks(this Effekseer.EffekseerEffectAsset obj){
 
       if (obj)
@@ -466,33 +519,14 @@ if (objs.GetComponent<T>()==null)
    return keikei.Effspawn(effect,obj.transform);
 }
   }public static void effecseerstop(this GameObject obj){
-  obj.GetComp<Effekseer.EffekseerEmitter>().Stop();
+  obj.GetComponentIfNotNull<Effekseer.EffekseerEmitter>().Stop();
 
 
      
   }
 
-public static Component Getreturn(this Component obj,GameObject objs){
-return objs.GetComponent(obj.GetType())as Component;
-}
-
-public static void Get(this Component obj,GameObject objs){
-obj= obj.Getreturn(objs);
-
-}
 
 
-  public static T GetComp<T>(this GameObject obj){
-if (obj.GetComponent<T>()!=null)
-{
-  return obj.GetComponent<T>();
-}else
-{
-  return default(T);
-}
-
-
-  }
 
   
   public static List<T> replace<T>(this List<T> objs,T ob,T obs){
@@ -533,27 +567,36 @@ return obj.root().GetComponentIfNotNull<playerclass>();
        return col.gameObject.CompareTag("Player");
         
   }
-public static void addforce(this GameObject obj,int forcepowers,Transform trans){
+public static void addforce(this MonoBehaviour mono, GameObject obj,int forcepowers,Transform trans){
 
-  
-Rigidbody rb=obj.GetComponent<Rigidbody>();
-if (rb!=null)
-{if (obj.GetComponent<navchaise>())
-{
-  obj.GetComponent<navchaise>().agent.enabled=false;
-rb.AddForce(trans.forward*forcepowers,ForceMode.Impulse); 
-obj.GetComponent<navchaise>().agent.enabled=true;
-}else
-{
-  rb.AddForce(trans.forward*forcepowers,ForceMode.Impulse); 
-}
+  mono.StartCoroutine(obj.transform.AddForces(trans.forward*forcepowers));     
 }
 
-    
+
+public static IEnumerator AddForces(this Transform obj,Vector3 force,System.Action ac=null)
+{
+var forcepart=force/10;
+	var temp=forcepart;
+	
+	while (forcepart.sqrMagnitude<force.sqrMagnitude)
+	{
+		obj.Translate(temp);
+forcepart+=temp;
+
+yield return new WaitForSeconds(0.0001f);
+	}
+ac();
+	yield return null;
 }
+
+
   public static bool ptag(this GameObject col){
 
        return col.CompareTag("Player");
+        
+  } public static bool etag(this GameObject col){
+
+       return col.CompareTag("Enemy");
         
   }
   public static bool proottag(this Collider col){
@@ -564,6 +607,16 @@ obj.GetComponent<navchaise>().agent.enabled=true;
   public static bool proottag(this GameObject col){
 
        return col.root().ptag();
+        
+  } 
+  public static bool eroottag(this Collider col){
+
+       return col.gameObject.eroottag();
+        
+  }
+  public static bool eroottag(this GameObject col){
+
+       return col.root().etag();
         
   }
   
@@ -580,10 +633,7 @@ return obj.gameObject.root();
   }
   
  
-public static void fadeoutactives(this GameObject obj){
-fadeoutactives(obj,true);
-}
-public static void fadeoutactives(this GameObject obj,bool actives){
+public static void fadeoutactives(this GameObject obj,bool actives=true){
 
 obj.SetActive(actives);
 Fade.Instance.FadeOut(1f);
@@ -611,15 +661,31 @@ foreach (GameObject item in objs)
 return coms;
 
  }
-public static void whilecall(this System.Action action,float time){
- bool duration=true;
- while (duration)
- {
-  action();
-  keikei.delaycall(()=>duration=false,time);
- }
+
+
+public static void delayAndwhilecall(this MonoBehaviour mono,System.Action action,float delay,float duration){
+   keikei.delaycall(()=>mono.whilecall(action,duration),delay);
+
+}
+
+ 
+public static void whilecall(this MonoBehaviour mono,System.Action action,float time){
+ mono.StartCoroutine(whilecall(action,time));
+
 
 } 
+
+
+public static IEnumerator whilecall(System.Action action,float time,float deltaTime=0)
+{
+  
+ while (deltaTime<time)
+ {
+  action();
+  deltaTime+=Time.deltaTime;
+ }
+  yield return null;
+}
 
 public static void collset(this GameObject obj,int damagevalue){
 if (obj.GetComponent<Collider>()==null)
@@ -637,7 +703,6 @@ obj.AddComponentIfnull<attackunitychan>().damagevalue=damagevalue;
 obj.AddComponentIfnull<enemyattack>().damagevalue=damagevalue;
 }
 }
-
 
 
 public static void damageset(this GameObject obj,int damagevalue){
@@ -687,11 +752,7 @@ return obj.GetComponent<GetBodyPart>().GetLeftFoot().GetComponent<Collider>().ga
 }
     }
 
-     public static void setA(this Image col,int a){
-Color c=col.color;
-c.a=a;
-col.color=c;
-     }
+   
 
     public static GameObject spawn(this enemystatus enemystatus,Transform trans){
 
@@ -722,6 +783,18 @@ for (var i = 0; i < item.number; i++)
 }
   return objs;
      }
+
+public static Vector3 TwoPositionCloseRate(this GameObject From,GameObject To ,float rate){
+ 
+ Vector3 pos=(1-rate)*From.transform.position+ rate*To.transform.position;
+
+return pos;
+
+}
+public static void MoveTargetRate(this GameObject From,GameObject To ,float rate,float time=1,System.Action action=null){
+From.transform.DOMove(From.TwoPositionCloseRate(To,rate),time).OnComplete(()=>action());
+}
+
 
 public static message acessmessage(this GameObject obj){
 
@@ -774,60 +847,8 @@ foreach (var item in itemdrop.GetItemdropLists())
 a.GetComponent<GIE.Chest>().itemdrop=itemdrop;
  
   }
-public static GameObject FindAllChild(this GameObject obj,string objname){
-
-
-foreach (GameObject item in obj.GetAll())
-{if (item.name==objname)
-{
-  return item;
-}
-}
-return null;
-}
-  public static GameObject NearserchTag(this GameObject nowObj,string tagName){
-        float tmpDis = 0;           //距離用一時変数
-        float nearDis = 0;          //最も近いオブジェクトの距離
-        //string nearObjName = "";    //オブジェクト名称
-        GameObject targetObj = null; //オブジェクト
-
-        //タグ指定されたオブジェクトを配列で取得する
-        foreach (GameObject obs in  GameObject.FindGameObjectsWithTag(tagName)){
-            //自身と取得したオブジェクトの距離を取得
-            tmpDis =(obs.transform.position- nowObj.transform.position).sqrMagnitude;
-
-            //オブジェクトの距離が近いか、距離0であればオブジェクト名を取得
-            //一時変数に距離を格納
-            if (nearDis == 0 || nearDis > tmpDis){
-                nearDis = tmpDis;
-                //nearObjName = obs.name;
-                targetObj = obs;
-            }
-
-        }
-        //最も近かったオブジェクトを返す
-        //return GameObject.Find(nearObjName);
-        return targetObj;
+    public static Collider Collider(this GameObject obj){
+     return obj.GetComponentIfNotNull<Collider>();
     }
     
-    
-    
-    public static GameObject[] RadiusSearchTag(this GameObject nowObj,string tagName,float radius){
-        float tmpDis = 0;           //距離用一時変数
-          //string nearObjName = "";    //オブジェクト名称
-        GameObject[] targetObj = null; //オブジェクト
-
-        //タグ指定されたオブジェクトを配列で取得する
-        foreach (GameObject obs in  GameObject.FindGameObjectsWithTag(tagName)){
-            //自身と取得したオブジェクトの距離を取得
-            tmpDis =(obs.transform.position- nowObj.transform.position).sqrMagnitude;
-if (tmpDis<radius)
-{
-  targetObj.Add(obs);
-}
-        
-        }
-        
-        return targetObj;
-    }
 }

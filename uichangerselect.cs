@@ -14,8 +14,7 @@ public uichanger uichanger;
  public KeyCode downkey;
 public KeyCode decidekey;
 public Text text;
-public itemcurrent itemcurrent;
-
+itemcurrent itemcurrent;
 	//　メインカメラ
 	
 	[SerializeField]
@@ -33,7 +32,7 @@ processors.onClick.AddListener(() => {add();});
 unprocessors.onClick.AddListener(() => {down();});
     }
     
-   
+   itemcurrent=gameObject.pclass().itemcurrent;
 }
 void Start()
 { keiinput=gameObject.pclass().keiinput;
@@ -114,7 +113,7 @@ if (keiinput.down)
 {
 	down();
 }
-	
+
 						
 	}
 

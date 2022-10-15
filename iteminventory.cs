@@ -13,40 +13,8 @@ public int Listsize=10;
 
 
 
-public bool additem(Itemkind item){
-if (item==keikei.noitem)
-{
-	return false;
-}
 
-foreach (Itemkind items in myitemLists)
-{if (items.GetItemName()==item.GetItemName())
-{
-	item.addnumber();
-	   warning.message(item.GetItemName()+"をゲットした");
-      
-	return true;
-}
-}
-
-if (myitemLists.Count<Listsize)
-{
-myitemLists.Add(item);	
-	   warning.message(item.GetItemName()+"をゲットした");
-    
-return true;
-}else
-{
-warning.message("インベントリがいっぱいです",1);
-return false;
-}
-	
-	
-	return false;
-}
-
-
-public bool additem(Itemkind item,bool message){
+public bool additem(Itemkind item,bool message=true){
 if (item==keikei.noitem)
 {
 	return false;
@@ -94,18 +62,7 @@ public Itemkind removeList(Itemkind Itemkind){
 
 public List<Itemkind> removeLists(Itemkind Itemkind) {
 
-	if (Itemkind.Getnumber()==0)
-	{
-		myitemLists.Remove(Itemkind);
-	
-	}else
-	{
-		Itemkind.downnumber();
-	}
-		
-	
-	
-			return myitemLists;
+			return Remove(Itemkind);
 	}
 public List<Itemkind> Remove(Itemkind Itemkind) {
 
@@ -117,9 +74,6 @@ public List<Itemkind> Remove(Itemkind Itemkind) {
 	{
 		Itemkind.downnumber();
 	}
-		
-	
-	
 			return myitemLists;
 	}
 

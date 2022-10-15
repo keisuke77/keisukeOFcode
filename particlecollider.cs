@@ -8,11 +8,12 @@ public class particlecollider: MonoBehaviour
      [SerializeField]
     GameObject spawnobj2;
     private gameover gameover;
+    public GameObject parentEffect;
     public bool playerdamage=false;
     public bool enemydamage=false;
     public bool jumpeffect=true;
     public bool death=false; 
-
+public Transform warpPos;
 List<GameObject> spawns;
     public int damagepower=10;
 public float explosionspeed=0;
@@ -66,28 +67,8 @@ foreach (var objss in spawns)
     //パーティクルの当たった箇所でオブジェクト出現
     void OnParticleCollision(GameObject other)
     {
-if (explosionspeed!=0)
-{
- 
-
-        // 風速計算
-        var velocity = (other.transform.position - transform.position).normalized * explosionspeed;
-
-	   if(other.GetComponent<Rigidbody>()!=null){
-         var rb = other.GetComponent<Rigidbody>();
-     // 風力与える
-        rb.AddForce(velocity);
- 
-     }else if(other.GetComponent<UnityChanControlScriptWithRgidBody>()!=null)
-   {
-       var rb = other.GetComponent<UnityChanControlScriptWithRgidBody>();
-     // 風力与える
-        rb.AddForce(velocity);
- 
-   }
-	}
-   
-if (other.gameObject.transform.root.gameObject.tag=="Enemy")
+        
+if (other.eroottag())
         {
 
   
@@ -95,7 +76,7 @@ if (other.gameObject.transform.root.gameObject.tag=="Enemy")
 
 if (enemydamage)
 {
-     var b = other.GetComponent<enemyhp>();
+     var b = other.GetComponent<hpcore>();
 b.damage(damagepower);
 
 }
@@ -109,13 +90,26 @@ if (enemyhitobjspawn==true)
         }
  
         }
-else if (other.gameObject.transform.root.gameObject.tag=="Player")
-        { obj=other.gameObject.transform.root.gameObject;
-              var unityhp = obj.GetComponent<hp>();
-            var unitycon = obj.GetComponent<UnityChanControlScriptWithRgidBody>();
+else if (other.gameObject.proottag())
+        { 
+            
+            
+            obj=other.gameObject.transform.root.gameObject;
+              var hp = obj.GetComponent<hp>();
+            var unitycon = obj
+            .GetComponent<UnityChanControlScriptWithRgidBody>();
 if (playerdamage)
 {
-unityhp.damage(damagepower);
+hp.damage(damagepower);
+}
+if (parentEffect!=null)
+{
+  var e=  parentEffect.Instantiate(other.gameObject.transform);
+e.transform.parent=other.gameObject.transform;
+}
+if (warpPos!=null)
+{
+    keikei.PlayerEnterTransform(obj,warpPos);
 }
 if(playerhitobjspawn==true){
  objspawns(other);
@@ -125,17 +119,33 @@ if(playerhitobjspawn==true){
 }
 
             if (jumpeffect)
-            {
+            { // プレイヤーに風力与える
+unitycon?.AddForce(Vector3.up*effectpower);
                      }
         
 
-        }
- if (other.gameObject.transform.root.gameObject.tag!="Enemy"&&other.gameObject.transform.root.gameObject.tag!="Player"&&hitobjspawn)
+        
+
+if (explosionspeed!=0)
+{
+ 
+
+        // 風速計算
+        var velocity = (other.transform.position - transform.position).normalized * explosionspeed;
+    // プレイヤーに風力与える
+unitycon?.AddForce(velocity);
+
+
+	  
+	}
+   
+ 
+             
+    
+         }else if (hitobjspawn)
         {
            objspawns(other);
              Destroy(gameObject);
         }
-             
-    
-         }
+}
 }

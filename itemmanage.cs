@@ -15,10 +15,10 @@ public class itemmanage : MonoBehaviour
 void Awake()
 {
     gameObject.pclass().itemmanage=this;
-  
+   playeriteminventory=gameObject.acessdata().saveiteminventory;
 }
 void Start()
-{  playeriteminventory=gameObject.acessdata().saveiteminventory;
+{ 
 imagecreate();
 }
 

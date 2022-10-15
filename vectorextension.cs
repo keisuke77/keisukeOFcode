@@ -39,7 +39,7 @@ public static Vector3 ToEulerAnglesZimbalLock(float x, float z, Quaternion q)
 
 
 public static Vector3 ToEulerAngles(this Quaternion q)
-{
+{ 
     var sinX = 2 * q.y * q.z - 2 * q.x * q.w;
     var absSinX = Mathf.Abs(sinX);
     const float e = 0.001f;

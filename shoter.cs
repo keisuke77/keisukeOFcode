@@ -53,7 +53,7 @@ if (auto)
     
           GameObject bullet = Instantiate(shottarget,transform.position+ direction.normalized+transform.up*0.7f, Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, 0));
          
-                Rigidbody ballRigidbody = bullet.AddComponentIfNotNull<Rigidbody>();
+                Rigidbody ballRigidbody = bullet.AddComponentIfnull<Rigidbody>();
         if (forwardforce)
         {
              ballRigidbody.AddForce(transform.forward * speed,ForceMode.Impulse);

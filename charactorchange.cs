@@ -80,11 +80,11 @@ public List<string> m_DropOptions;
 	void Awake()
 	{
 		tempactive=-1;
-		data=gameObject.acessdata();
-		active=data.charactor;
+		
 		}
 void Start()
-{ 
+{ data=gameObject.acessdata();
+		active=data.charactor;
 	
 		if (anim==null)
 {
@@ -134,7 +134,10 @@ characterss.mesh.SetActive(false);
 
 public void charactorchanger(int num){
 characters[Mathf.Abs(num)].Set(this,characters);
+if (text!=null)
+{
 text.text=characters[Mathf.Abs(num)].name;
+}
 data.charactor=Mathf.Abs(num);
 }
 

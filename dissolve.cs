@@ -42,7 +42,8 @@ public class dissolve : ScriptableObject
  }public void dissolveOut(Action action){
  dissolveOut(1,action);
  }
- public void dissolveIn(float time,Action action){
+ public void dissolveIn(
+    float time,Action action){
 DOVirtual.Float(1f, 0f, time, value =>{rate(meshRenderers,value);}).OnComplete(()=>{action();});
 }public void dissolveOut(float time,Action action){
 DOVirtual.Float(0f, 1f, time, value =>{rate(meshRenderers,value);}).OnComplete(()=>{action();});

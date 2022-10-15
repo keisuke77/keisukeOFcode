@@ -55,6 +55,10 @@ panel.transform.parent.GetComponent<Canvas>().enabled=false;
         questboardset(quests[num]);
         data=keikei.playerdata;
         questpanelclose();
+        if (data.nowquest!=null)
+        {
+            data.nowquest.queststart();
+        }
     }
 
 

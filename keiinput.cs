@@ -39,12 +39,13 @@ public inputsetting inputsetting;
 public float time=0.1f;
 WaitForSeconds wait;
 public bool inputsystemnew;
+public static keiinput Instance;
  
  public bool stop;
 
    void Awake()
-   {gameObject.pclass().keiinput=this;
-
+   {
+Instance=this;gameObject.pclass().keiinput=this;
    }
 
    public Vector2 GetDpad()
@@ -148,6 +149,20 @@ yield return null;
 
 public string[] ControllerConnectionNames;
     // Update is called once per frame
+
+Vector3 TryGetDpad(){
+ try
+       {
+          return new Vector3((float)inputsetting?.horizonaxis?.GetAxis(),(float)inputsetting?.verticalaxiss?.GetAxis(),0);
+
+       }
+       catch (System.Exception e)
+       {
+        
+        return Vector2.zero;
+       }
+}
+
     void Update()
     {
         ControllerConnectionNames = Input.GetJoystickNames();
@@ -157,8 +172,10 @@ public string[] ControllerConnectionNames;
             
         }
 
-       directionkey= new Vector3(inputsetting.horizonaxis.GetAxis(),inputsetting.verticalaxiss.GetAxis(),0);
- if (directionkey==Vector2.zero)
+       directionkey= TryGetDpad();
+      
+
+      if (directionkey==Vector2.zero)
  {
     directionkey=UIInputSystem.ME.GetAxis(JoyStickAction.Movement);
  }

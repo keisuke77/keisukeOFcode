@@ -9,7 +9,7 @@ public class textanim : MonoBehaviour
 Text text;
 string str;
     // Start is called before the first frame update
-     void LateStart()
+     void Awake()
     {
          text=GetComponent<Text>();
         str=text.text;

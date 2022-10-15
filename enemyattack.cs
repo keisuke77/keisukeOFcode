@@ -14,19 +14,15 @@ enemyattackcore enemyattackcore;
     // Start is called before the first frame update
    
    
-    void Start()
+    void Awake()
     {
-       
   enemyattackcore=gameObject.rootaddcomponent<enemyattackcore>();
-      
-      
-        
     }
 
  void OnParticleCollision(GameObject other)
  {
 
- if (other.CompareTag("Player"))
+ if (other.proottag()&&other!=gameObject)
     { 
 enemyattackcore.attackon(other.gameObject,damagevalue,force,CritRate,CritMultiplier,forcepower,sequencehit);
           }
@@ -36,7 +32,7 @@ enemyattackcore.attackon(other.gameObject,damagevalue,force,CritRate,CritMultipl
 
 void OnTriggerEnter(Collider other)
 {
-    if (other.CompareTag("Player"))
+    if (other.proottag()&&other.gameObject!=gameObject)
     { 
 enemyattackcore.attackon(other.gameObject,damagevalue,force,CritRate,CritMultiplier,forcepower,sequencehit);
           }
